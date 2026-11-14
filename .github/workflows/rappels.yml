@@ -1,0 +1,27 @@
+name: Rappels en stories
+on:
+  schedule:
+    # mercredi 14 h et vendredi 15 h, heure de Montréal (deux créneaux UTC pour couvrir l'heure d'été et d'hiver)
+    - cron: "0 18,19 * * 3"
+    - cron: "0 19,20 * * 5"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: publication
+jobs:
+  rappel:
+    runs-on: ubuntu-latest
+    env:
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      IMAGE_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publier le rappel s'il est dû
+        run: python3 publier.py rappel
+      - name: Enregistrer l'état
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A sortie.json 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "Rappel publié" && git push)

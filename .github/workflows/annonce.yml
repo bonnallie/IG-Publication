@@ -1,0 +1,38 @@
+name: Annonce de la sortie
+on:
+  workflow_dispatch:
+    inputs:
+      lieu:
+        description: "Lieu (nom du dossier dans lieux/, ex. kohi)"
+        required: true
+      date:
+        description: "Date de la sortie AAAA-MM-JJ (vide = samedi prochain)"
+        required: false
+      changement:
+        description: "Changement de lieu de dernière minute"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency: publication
+jobs:
+  annonce:
+    runs-on: ubuntu-latest
+    env:
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      IMAGE_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}
+      LIEU: ${{ inputs.lieu }}
+      DATE: ${{ inputs.date }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publier
+        run: python3 publier.py annonce --lieu "$LIEU" ${DATE:+--date "$DATE"} ${{ inputs.changement && '--changement' || '' }}
+      - name: Textes pour Facebook et la conversation privée
+        run: python3 publier.py kit >> "$GITHUB_STEP_SUMMARY"
+      - name: Enregistrer la sortie courante
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sortie.json
+          git commit -m "Sortie courante : $LIEU" && git push
