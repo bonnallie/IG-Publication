@@ -8,6 +8,9 @@ on:
       date:
         description: "Date de la sortie AAAA-MM-JJ (vide = samedi prochain)"
         required: false
+      legende:
+        description: "Message libre (vide = message habituel)"
+        required: false
       changement:
         description: "Changement de lieu de dernière minute"
         type: boolean
@@ -24,10 +27,11 @@ jobs:
       IMAGE_BASE_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}
       LIEU: ${{ inputs.lieu }}
       DATE: ${{ inputs.date }}
+      LEGENDE: ${{ inputs.legende }}
     steps:
       - uses: actions/checkout@v4
       - name: Publier
-        run: python3 publier.py annonce --lieu "$LIEU" ${DATE:+--date "$DATE"} ${{ inputs.changement && '--changement' || '' }}
+        run: python3 publier.py annonce --lieu "$LIEU" ${DATE:+--date "$DATE"} ${LEGENDE:+--legende "$LEGENDE"} ${{ inputs.changement && '--changement' || '' }}
       - name: Textes pour Facebook et la conversation privée
         run: python3 publier.py kit >> "$GITHUB_STEP_SUMMARY"
       - name: Enregistrer la sortie courante

@@ -2,7 +2,7 @@
 """Publication Instagram des sorties Sexy Pace Collective.
 
 Commandes :
-  annonce --lieu SLUG [--date AAAA-MM-JJ] [--changement]   carrousel grille + 3 stories, enregistre sortie.json
+  annonce --lieu SLUG [--date AAAA-MM-JJ] [--changement] [--legende TEXTE]  carrousel grille + 3 stories, enregistre sortie.json
   rappel                                                   stories de rappel (mer. 14h / ven. 15h) si dues
   stories                                                  republie tout de suite les 3 stories de la sortie courante
   kit                                                      affiche les textes pour Facebook / conversation privée
@@ -56,19 +56,12 @@ def fiche(slug):
     return data["lieux"][slug]
 
 
-def legende(slug, date, changement=False):
-    l = fiche(slug)
+def legende(slug, date, changement=False, perso=None):
+    fiche(slug)
     entete = "⚠️ CHANGEMENT DE LIEU ⚠️\n\n" if changement else ""
-    return (
-        f"{entete}LONG RUN DU SAMEDI · {date_longue(date)}\n\n"
-        f"📍 {l['nom']}\n{l['adresse']}\n\n"
-        "8H > ROUTE\n± 9-10 km, 60 min, rythme Sexy Pace inclusif. Tous les niveaux bienvenus.\n\n"
-        "9H > TRAIL\n± 11-13 km & 300-400 D+. Retour au même point de départ.\n\n"
-        "Envie d'une longue? Enchaîne les deux! Juste le temps de changer de souliers, et hop, on repart.\n\n"
-        "On part à l'heure pile. Arrive d'avance pour ne rien manquer.\n\n"
-        "Qui sera de la partie?\n\n"
-        "#sexypacecollective #longrun #courseapied #trailrunning #laurentides"
-    )
+    jour = f"{date.day}{'er' if date.day == 1 else ''} {MOIS[date.month - 1]}"
+    corps = perso or "Voici les infos pour ce weekend!\n\nOn se voit bientôt! :D"
+    return f"{entete}🚨{jour} 👈\n{corps}"
 
 
 def api(methode, chemin, **params):
@@ -137,7 +130,7 @@ def cmd_annonce(a):
     date = dt.date.fromisoformat(a.date) if a.date else prochain_samedi(maintenant.date())
     if date < maintenant.date():
         sys.exit(f"La date {date} est passée.")
-    texte = legende(a.lieu, date, a.changement)
+    texte = legende(a.lieu, date, a.changement, a.legende)
     print(texte, "\n")
     publier_carrousel(a.lieu, texte)
     publier_stories(a.lieu)
@@ -169,7 +162,10 @@ def cmd_kit(a):
     s = lire_sortie() or sys.exit("Aucune sortie annoncée.")
     l, d = fiche(s["lieu"]), dt.date.fromisoformat(s["date"])
     print(f"""## Groupe Facebook (annonce)
-{legende(s['lieu'], d).split(chr(10) + chr(10) + '#')[0]}
+{legende(s['lieu'], d)}
+
+📍 {l['nom']}, {l['adresse']}
+8h route (± 9-10 km) · 9h trail (± 11-13 km & 300-400 D+)
 
 ## Événement Facebook
 Nom : Long run du samedi · {l['nom']}
@@ -196,6 +192,7 @@ def main():
     an.add_argument("--lieu", required=True)
     an.add_argument("--date")
     an.add_argument("--changement", action="store_true")
+    an.add_argument("--legende", help="texte libre qui remplace le message habituel")
     an.set_defaults(f=cmd_annonce)
     for nom, f in (("rappel", cmd_rappel), ("stories", cmd_stories), ("kit", cmd_kit)):
         sp.add_parser(nom).set_defaults(f=f)
