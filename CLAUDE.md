@@ -13,7 +13,7 @@ Automatise l'annonce du long run du samedi. L'utilisateur parle français (Québ
 1. Vérifier que `lieux/<slug>/` existe avec ses 6 JPEG. Sinon, voir « Nouveau lieu ».
 2. Demander l'heure de publication si elle n'est pas donnée (sinon : tout de suite).
 3. Lancer le workflow `annonce.yml` (outil GitHub `actions_run_trigger`) avec `lieu`, et `date` si ce n'est pas samedi prochain. La légende par défaut est courte (« 🚨21 novembre 👈 Voici les infos pour ce weekend! On se voit bientôt! :D ») car tout est déjà dans les visuels ; de temps en temps, proposer une variante créative via `legende` (la ligne de date est ajoutée automatiquement). Il publie le carrousel et les 3 stories, puis enregistre `sortie.json`.
-4. Vérifier que l'exécution a réussi, puis donner à l'utilisateur deux consignes prêtes à coller dans l'extension Chrome (texte : `python3 publier.py kit`, aussi dans le résumé de l'exécution) :
+4. Vérifier que l'exécution a réussi. **Si la session a accès au navigateur Chrome de l'utilisateur** (session locale avec l'extension Claude pour Chrome), faire soi-même les étapes Facebook et conversation privée ci-dessous, en montrant le texte avant d'envoyer la première fois. **Sinon** (session dans le nuage), donner à l'utilisateur deux consignes prêtes à coller dans l'extension Chrome (texte : `python3 publier.py kit`, aussi dans le résumé de l'exécution) :
    - maintenant : publier l'annonce dans https://www.facebook.com/groups/sexypace et y créer l'événement ;
    - vendredi 15 h : « C'est demain @tout le monde » dans le groupe, et le message « qui vient ? » dans la conversation Instagram, avec deux emojis au choix (thème libre, différents chaque semaine) pour 8h et 9h.
 
