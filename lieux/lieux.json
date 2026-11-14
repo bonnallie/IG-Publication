@@ -1,0 +1,15 @@
+{
+  "defaut": {
+    "titre": "Long run du samedi",
+    "departs": [
+      { "heure": "8h", "type": "Route", "details": "plus ou moins 9-10 km, 60 min, rythme Sexy Pace inclusif (tous les niveaux bienvenus)" },
+      { "heure": "9h", "type": "Trail", "details": "plus ou moins 11-13 km et 300-400 D+, retour au même point de départ" }
+    ]
+  },
+  "lieux": {
+    "kohi": { "nom": "Kohi Micro-torréfacteur", "adresse": "953 Chem. du Lac Écho, Prévost" },
+    "parc-basler": { "nom": "Parc Basler", "adresse": "99 Chem. du Lac Écho, Morin-Heights" },
+    "val-david": { "nom": "Val-David (chalet), secteur Dufresne", "adresse": "1165 Ch du Condor, Val-David, J0T 2N0" },
+    "gare-prevost": { "nom": "Gare de Prévost", "adresse": "1272 Rue de la Traverse, Prévost" }
+  }
+}
